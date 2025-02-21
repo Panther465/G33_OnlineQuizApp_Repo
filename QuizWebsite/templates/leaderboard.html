@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Additional custom styling -->
+<style>
+  .leaderboard-container {
+    margin-top: 50px;
+ 
+    padding: 40px;
+    border-radius: 15px;
+   
+  }
+  .leaderboard-header {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 30px;
+    background: none;
+    font-family: "Rubik";
+  }
+  .nav-tabs .nav-link {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #495057;
+    border: none;
+    background: transparent;
+  }
+  .nav-tabs .nav-link.active {
+    background-color: #007bff;
+    color: #fff;
+    border-bottom: 3px solid #0056b3;
+    border-radius: 30px;
+  }
+  .table {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .table thead th {
+    background-color: #343a40;
+    color: #fff;
+    padding: 15px;
+  }
+  .table tbody td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    background-color: #d5dce7;
+  }
+  .table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  .expandable-content {
+    background: #e9ecef;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+  }
+  .badge {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+  .card {
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+
+  .below{
+    background: none;
+  }
+
+  .create{
+    border-radius: 30px;
+    background: #0056b3;
+    color:#f7f7f7;
+    }
+
+  .home{
+    border-radius: 30px;
+    background: darkgreen;
+  }
+  #trivia h4{
+    font-family:"Dm Sans";
+  }
+</style>
+
+<div class="container leaderboard-container">
+  <h2 class="text-center leaderboard-header">Your Progress</h2>
+  
+  <!-- Trivia Bar Graph -->
+  <div class="mb-5" style="max-width: 400px; margin: 0 auto; height:300px; ">
+    <canvas id="leaderboardChart"></canvas>
+  </div>
+  
+  <!-- Navigation Tabs -->
+  <ul class="nav nav-tabs mb-4" id="leaderboardTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="trivia-tab" data-bs-toggle="tab" data-bs-target="#trivia" type="button" role="tab" aria-controls="trivia" aria-selected="true">
+        Trivia Leaderboard
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="custom-tab" data-bs-toggle="tab" data-bs-target="#custom" type="button" role="tab" aria-controls="custom" aria-selected="false">
+        Custom Quiz Leaderboard
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="false">
+        Pending Quizzes
+      </button>
+    </li>
+  </ul>
+  
+  <div class="tab-content" id="leaderboardTabsContent">
+    <!-- Trivia Leaderboard Tab with Expandable Rows -->
+    <div class="tab-pane fade show active" id="trivia" role="tabpanel" aria-labelledby="trivia-tab">
+      <h4 class="mb-3">Trivia Leaderboard</h4>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Medal</th>
+              <th>Username</th>
+              <th>Quizzes Taken</th>
+              <th>Total Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {# Sort main_leaderboard descending by total_score #}
+            {% for user in main_leaderboard|sort(attribute='total_score', reverse=True) %}
+            <tr class="expandable-row" data-username="{{ user.username }}" data-toggle="collapse" data-target="#details-{{ loop.index }}">
+              <td>
+                {% if loop.index == 1 %}
+                  <span class="badge bg-warning text-dark">Gold</span>
+                {% elif loop.index == 2 %}
+                  <span class="badge bg-secondary">Silver</span>
+                {% elif loop.index == 3 %}
+                  <span class="badge bg-danger">Bronze</span>
+                {% else %}
+                  -
+                {% endif %}
+              </td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.quiz_count }}</td>
+              <td>{{ user.total_score }}</td>
+            </tr>
+            <tr class="collapse" id="details-{{ loop.index }}">
+              <td colspan="4">
+                <div class="expandable-content">
+                  <h5>Quiz Details for {{ user.username }}</h5>
+                  {% set details = quiz_details.get(user.username, [])|sort(attribute='timestamp', reverse=True) %}
+                  {% if details %}
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Genre</th>
+                        <th>Score</th>
+                        <th>Total</th>
+                        <th>Date Taken</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for quiz in details %}
+                      <tr>
+                        <td>{{ quiz.genre }}</td>
+                        <td>{{ quiz.score }}</td>
+                        <td>{{ quiz.total }}</td>
+                        <td>{{ quiz.timestamp }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                  {% else %}
+                  <p>No quiz details available.</p>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Custom Quiz Leaderboard Tab (No Expandable Rows) -->
+    <div class="tab-pane fade" id="custom" role="tabpanel" aria-labelledby="custom-tab">
+      <h4 class="mb-3">Custom Quiz Leaderboard</h4>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Quizzes Taken</th>
+              <th>Total Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in custom_aggregated|sort(attribute='total_score', reverse=True) %}
+            <tr>
+              <td>{{ user.username }}</td>
+              <td>{{ user.quiz_count }}</td>
+              <td>{{ user.total_score }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Pending Quizzes Tab -->
+    <div class="tab-pane fade" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+
+  
+      <div class="row">
+          {% for quiz in pending_quizzes %}
+          <div class="col-md-4 mb-3">
+              <div class="quiz-card">
+                  <div class="quiz-card-body">
+                      <h5 class="quiz-title">{{ quiz.title }}</h5>
+                      <p class="quiz-info">
+                          <strong>Subject:</strong> {{ quiz.subject }}<br>
+                          <strong>Created by:</strong> {{ quiz.created_by }}
+                      </p>
+                      {% if current_user.is_authenticated %}
+                          <a href="{{ url_for('take_custom', quiz_id=quiz.id) }}" class="btn btn-primary">Take Quiz</a>
+                      {% else %}
+                          <a href="{{ url_for('login', next=url_for('take_custom', quiz_id=quiz.id)) }}" class="btn btn-warning">Login to Take Quiz</a>
+                      {% endif %}
+                  </div>
+              </div>
+          </div>
+          {% else %}
+          <div class="col-12">
+              <div class="alert-message">No pending quizzes available.</div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+  
+  <style>
+      /* Section Title */
+      .section-title {
+          font-size: 22px;
+          font-weight: bold;
+          color: white;
+          text-align: center;
+          margin-bottom: 20px;
+      }
+  
+      /* Quiz Card Styling */
+      .quiz-card {
+          background: linear-gradient(to bottom, #2162a4, #134074);
+          color: white;
+          border-radius: 15px;
+          padding: 20px;
+          text-align: center;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+  
+      .quiz-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+  
+      .quiz-card-body {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+      }
+  
+      .quiz-title {
+          font-size: 20px;
+          font-weight: bold;
+          margin-bottom: 10px;
+      }
+  
+      .quiz-info {
+          font-size: 16px;
+          margin-bottom: 15px;
+      }
+  
+      /* Alert Message */
+      .alert-message {
+          background-color: #74d6fa;
+          color: #333;
+          padding: 15px;
+          text-align: center;
+          font-weight: bold;
+          border-radius: 8px;
+      }
+  
+      /* Buttons */
+      .btn {
+          padding: 10px 15px;
+          border-radius: 25px;
+          font-size: 14px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: 0.3s;
+          text-decoration: none;
+          display: inline-block;
+      }
+  
+      .btn-primary {
+          background: #007bff;
+          color: white;
+          border: none;
+      }
+  
+      .btn-primary:hover {
+          background: #0056b3;
+      }
+  
+      .btn-warning {
+          background: #ffcc00;
+          color: #333;
+          border: none;
+      }
+  
+      .btn-warning:hover {
+          background: #e6b800;
+      }
+  </style>
+  
+  
+  <div class="text-center below mt-4">
+    <a href="{{ url_for('create_custom_quiz') }}" class="btn create btn-info">Create Quiz</a>
+    <a href="{{ url_for('start_page') }}" class="btn home btn-secondary">Home</a>
+  </div>
+</div>
+
+<!-- Chart.js and Chartjs-plugin-datalabels for Trivia Bar Graph -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script>
+  // Sort aggregated_json descending by total_score
+  let aggregatedData = {{ aggregated_json|tojson }};
+  aggregatedData.sort((a, b) => b.total_score - a.total_score);
+  
+  const topThree = aggregatedData.slice(0, 3);
+  const labels = topThree.map(item => item.username);
+  const scores = topThree.map(item => item.total_score);
+  
+  // Create gradients for medals
+  const ctx = document.getElementById('leaderboardChart').getContext('2d');
+  
+  const gradientGold = ctx.createLinearGradient(0, 0, 0, 300);
+  gradientGold.addColorStop(0, 'rgba(255, 223, 0, 1)');
+  gradientGold.addColorStop(1, 'rgba(255, 215, 0, 0.5)');
+  
+  const gradientSilver = ctx.createLinearGradient(0, 0, 0, 300);
+  gradientSilver.addColorStop(0, 'rgba(192,192,192,1)');
+  gradientSilver.addColorStop(1, 'rgba(192,192,192,0.5)');
+  
+  const gradientBronze = ctx.createLinearGradient(0, 0, 0, 300);
+  gradientBronze.addColorStop(0, 'rgba(205,127,50,1)');
+  gradientBronze.addColorStop(1, 'rgba(205,127,50,0.5)');
+  
+  const barColors = [gradientGold, gradientSilver, gradientBronze];
+  
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Total Score',
+        data: scores,
+        backgroundColor: barColors,
+        borderColor: barColors.map(color => color),
+        borderWidth: 1,
+        borderRadius: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 2000,
+        easing: 'easeOutBounce'
+      },
+      plugins: {
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          formatter: (value, context) => {
+            const idx = context.dataIndex;
+            if (idx === 0) return 'Gold';
+            else if (idx === 1) return 'Silver';
+            else if (idx === 2) return 'Bronze';
+            return '';
+          },
+          color: '#000',
+          font: { weight: 'bold' }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { precision: 0, stepSize: 1 }
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+</script>
+
+<!-- JavaScript to toggle expandable rows -->
+<script>
+  // When an expandable row is clicked, toggle the associated collapse
+  document.querySelectorAll('.expandable-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var targetId = row.getAttribute('data-target');
+      var collapseElem = document.getElementById(targetId);
+      if(collapseElem) {
+        collapseElem.classList.toggle('show');
+      }
+    });
+  });
+</script>
+{% endblock %}
+{% block footer %}{% endblock %}

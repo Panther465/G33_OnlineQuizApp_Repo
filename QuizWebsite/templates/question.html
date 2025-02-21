@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ genre.capitalize() }} Quiz</title>
+    <style>
+        body {
+            background: white;
+            color: black;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quiz-container {
+            background-image: url("../static/./images/stacked-waves-haikei\(1\).svg");
+            background-size: cover;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            max-width: 800px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .timer-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .timer-svg {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+        }
+
+        .timer {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 50px;
+        }
+
+        .options button {
+            display: block;
+            width: 80%;
+            margin: 10px 0;
+            padding: 15px;
+            border: none;
+            border-radius: 20px;
+            background: #D2ECFF;
+            color: black;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.3s;
+        }
+
+        .options button:hover {
+            background: #A1D4FF;
+        }
+
+        .next-btn {
+            margin-top: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+        }
+
+        .next-btn:hover {
+            background: #0056b3;
+        }
+
+        /* Time's Up Popup */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: red;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            width: 50%;
+            max-width: 200px;
+            z-index: 1000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quiz-container {
+                width: 90%;
+                padding: 15px;
+            }
+
+            .options button {
+                width: 95%;
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            .timer {
+                width: 80px;
+                height: 80px;
+                font-size: 24px;
+            }
+
+            .timer-svg {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .options button {
+                font-size: 13px;
+                padding: 10px;
+            }
+
+            .next-btn {
+                font-size: 14px;
+                right: 10px;
+                bottom: 15px;
+            }
+
+            .popup {
+                width: 80%;
+                font-size: 24px;
+                padding: 20px;
+            }
+        }
+    </style>
+    <script>
+        let timeLeft = 60;
+        let timerInterval;
+
+        function startTimer() {
+            const timerElement = document.getElementById("timer");
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    timerElement.innerText = timeLeft;
+                } else {
+                    clearInterval(timerInterval);
+                    showTimeUpPopup();
+                }
+            }, 1000);
+        }
+
+        function showTimeUpPopup() {
+            clearInterval(timerInterval);
+
+            const popup = document.createElement("div");
+            popup.className = "popup";
+            popup.innerText = "⏳ Time's Up!";
+            
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+                popup.remove();
+                disableQuiz();
+            }, 3000);
+        }
+
+        function disableQuiz() {
+            const buttons = document.querySelectorAll(".options button");
+            buttons.forEach(button => {
+                button.disabled = true;
+                button.style.background = "#ccc";
+                button.style.cursor = "not-allowed";
+            });
+
+            const nextButton = document.querySelector(".next-btn");
+            if (nextButton) {
+                nextButton.disabled = true;
+                nextButton.style.background = "#ccc";
+                nextButton.style.cursor = "not-allowed";
+            }
+        }
+
+        window.onload = startTimer;
+    </script>
+</head>
+<body>
+    <div class="quiz-container">
+        <div>Question {{ index }} of {{ total }}</div>
+        <div class="timer-container">
+            <svg class="timer-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" stroke="#f7f7f7" stroke-width="5" fill="none"></circle>
+            </svg>
+            <div class="timer" id="timer">60</div>
+        </div>
+        <h2>{{ question }}</h2>
+        <form action="{{ url_for('next_question') }}" method="post">
+            <div class="options">
+                {% for option in options %}
+                    <button type="submit" name="answer" value="{{ option }}">{{ option }}</button>
+                {% endfor %}
+            </div>
+            <button type="submit" class="next-btn">Next →</button>
+        </form>
+    </div>
+</body>
+</html>

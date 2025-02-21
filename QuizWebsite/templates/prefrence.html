@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Preference Page</title>
+  <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="left-side">
+      <h1>Quiz Preferences</h1>
+      <form id="preference-form">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required>
+        </div>
+        <div class="form-group">
+          <label for="education-level">Education Level:</label>
+          <select id="education-level" name="education-level" required>
+            <option value="">Select your education level</option>
+            <option value="high-school">High School</option>
+            <option value="bachelors">Bachelor's Degree</option>
+            <option value="masters">Master's Degree</option>
+            <option value="phd">PhD</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quiz Category:</label>
+          <div class="category-buttons">
+            <button type="button" class="category-btn" data-category="engineering">Engineering</button>
+            <button type="button" class="category-btn" data-category="medical">Medical</button>
+            <button type="button" class="category-btn" data-category="geography">Geography</button>
+            <button type="button" class="category-btn" data-category="civil-services">Civil Services</button>
+            <button type="button" class="category-btn" id="other-btn">Other</button>
+          </div>
+          <div id="other-input" class="hidden">
+            <input type="text" id="custom-category" placeholder="Enter your category">
+          </div>
+        </div>
+        <button type="submit" class="submit-btn">Submit</button>
+      </form>
+    </div>
+    <div class="right-side">
+      <img src="../static./images/vector-art.svg" alt="Vector Art" class="vector-art">
+    </div>
+  </div>
+  <script src="../static/style.js"></script>
+</body>
+</html>

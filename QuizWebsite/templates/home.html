@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<style>
+    .quiz-card {
+        background: linear-gradient(to bottom, #e8ecf9, #add8e6);
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding-top: 50px;
+        position: relative;
+        text-align: center;
+        transition: transform 0.3s ease;
+        min-height: 200px;
+        margin-top:50px;
+    }
+
+    .quiz-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .quiz-icon {
+        width: 70px;
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .quiz-title {
+        font-weight: bold;
+        font-size: 1.2rem;
+        margin-top:30px !important;
+    }
+
+    .quiz-desc {
+        font-size: 1rem;
+        color: #333;
+        
+        margin-top:20px;
+    }
+
+    .play-btn {
+        border-radius: 50px;
+        padding: 10px 30px;
+        font-size: 1rem;
+        margin-top: 15px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .play-btn:hover {
+        background-color: #0056b3 !important; /* Change this color as per your theme */
+        color: #fff !important;
+        transform: scale(1.05);
+    }
+    
+
+    .play-btn:active {
+        background-color: #00408a !important; /* Darker shade for click effect */
+        transform: scale(0.98);
+    }
+</style>
+<!-- Hero Section -->
+<section class="hero-section gradient-bg text-white pt-5">
+    <div class="container pt-5">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-4 fw-bold mb-4">Test Your Knowledge!</h1>
+                <p class="lead mb-4">Join millions of players in daily trivia challenges</p>
+                <button class="btn btn-light btn-lg"><i class="fas fa-play me-2"></i>Start Now</button>
+            </div>
+            <div class="col-md-6 vector">
+                <img src="../static/./images/questions-animate(4).svg" class="img-fluid floating" alt="Quiz">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Grid -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4 top-category">🎯 Popular Categories</h2>
+    <div class="row card-father g-4 justify-content-center">
+        
+        <!-- Music Quiz -->
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+            <div class="quiz-card p-4 position-relative">
+                <img src="../static/./images/music3.svg" alt="Music" class="quiz-icon">
+                <h2 class="quiz-title mt-3">Music Quiz</h2>
+                <p class="quiz-desc">Guess songs & artists! 🎶!</p>
+                <a href="{{ url_for('start_quiz', genre='music') }}" class="btn btn-primary play-btn">Play</a>
+            </div>
+        </div>
+
+        <!-- Math Quiz -->
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+            <div class="quiz-card p-4 position-relative">
+                <img src="../static/./images/maths4.svg" alt="Math" class="quiz-icon">
+                <h2 class="quiz-title mt-3">Math Quiz</h2>
+                <p class="quiz-desc">Brain teasers & logic! 🧩</p>
+                <a href="{{ url_for('start_quiz', genre='math') }}" class="btn btn-danger play-btn">Play</a>
+            </div>
+        </div>
+
+        <!-- Puzzle Quiz -->
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+            <div class="quiz-card p-4 position-relative">
+                <img src="../static/./images/puzzle3.svg" alt="Puzzle" class="quiz-icon">
+                <h2 class="quiz-title mt-3">Puzzle Quiz</h2>
+                <p class="quiz-desc">Solve & calculate! ➕</p>
+                <a href="{{ url_for('start_quiz', genre='puzzle') }}" class="btn btn-success play-btn">Play</a>
+            </div>
+        </div>
+
+        <!-- Language Quiz -->
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+            <div class="quiz-card p-4 position-relative">
+                <img src="../static/./images/lang.svg" alt="Language" class="quiz-icon">
+                <h2 class="quiz-title mt-3">Language Quiz</h2>
+                <p class="quiz-desc">Words, grammar & more! 🌐</p>
+                <a href="{{ url_for('start_quiz', genre='language') }}" class="btn btn-warning play-btn">Play</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Current Contest -->
+<section class="container my-5 ">
+    <div class="contest-card gradient-bg text-white p-4 rounded-4 shadow-lg contest">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 style="color :#d7f3ff ; font-family:Rubik"><i class="fas fa-trophy me-2 " style="color:#ffbf47"></i>Current Contest</h2>
+            <a href="#" class="btn btn-light" style="border-radius: 30px; font-family:Dm Sans">See All &#10132;</a>
+        </div>
+        <div class="container complete">
+            <div class="countdown-wrapper">
+                <div class="time-card">
+                    <div class="time-value" id="hours">00</div>
+                    <div class="time-label">Hours</div>
+                </div>
+                <div class="time-card">
+                    <div class="time-value" id="minutes">00</div>
+                    <div class="time-label">Minutes</div>
+                </div>
+                <div class="time-card">
+                    <div class="time-value" id="seconds">00</div>
+                    <div class="time-label">Seconds</div>
+                </div>
+            </div>
+            <img class="count-vector" src="../static/./images/business-competition-animate.svg"/>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-clock fa-2x me-3"></i>
+                    <div>
+                        <small>Max Time</small>
+                        <div class="fw-bold">5 Minutes</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <img src="../static/./images/que.svg" style="width:40px; margin-right:10px;">
+                    <div>
+                        <small>Questions</small>
+                        <div class="fw-bold">20</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-light w-100 btn-join">Join Now</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Leaderboard -->
+<section class="container my-5 ">
+    <div class="card-leader shadow-lg leaders border-0">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-crown me-2"></i>Top Players</h2>
+                <a href="#" class="btn btn-light" style="border-radius: 30px; font-family:Dm Sans">See All →</a>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="player-card p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-wrapper me-3">
+                                <img src="../static/./images/naruto.png" class="player-avatar" alt="Player 1">
+                                <span class="rank-badge">#1</span>
+                            </div>
+                            <div>
+                                <h4>Naruto</h4>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-flag me-2"></i>
+                                    <span class="me-3">🇧🇸 Bahamas</span>
+                                    <i class="fas fa-star text-warning me-1"></i>
+                                    <span>1060 XP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="player-card p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-wrapper me-3">
+                                <img src="../static/./images/luffy.jpg" class="player-avatar" alt="Player 2">
+                                <span class="rank-badge">#2</span>
+                            </div>
+                            <div>
+                                <h4>Monkey D Luffy</h4>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-flag me-2"></i>
+                                    <span class="me-3">🇲🇩 Moldova</span>
+                                    <i class="fas fa-star text-warning me-1"></i>
+                                    <span>660 XP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container leader2">
+            <h5 class="leader-text">Think you're the best? Prove it!
+                <br>Climb the leaderboard and show the world!</h5>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonial  -->
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                <div class="carousel-inner">
+                    <!-- Testimonial 1 -->
+                    <div class="carousel-item active">
+                        <div class="testimonial-card">
+                            <i class="fas fa-quote-left quote-icon"></i>
+                            <img src="../static/images/A3.png" class="user-img" alt="User  1">
+                            <p class="testimonial-text">"I’m addicted to this quiz site! The challenges push my limits, and the leaderboard feature makes it so competitive and exciting. 10/10 experience!"</p>
+                            <h5 class="author-name">John Doe</h5>
+                            <span class="designation">Software Engineer</span>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="carousel-item">
+                        <div class="testimonial-card">
+                            <i class="fas fa-quote-left quote-icon"></i>
+                            <img src="../static/images/A1.png" class="user-img" alt="User  2">
+                            <p class="testimonial-text">"This quiz website is a game-changer! The variety of quizzes and challenges keeps me engaged, and I love how it tailors content to my interests. Highly recommended!"</p>
+                            <h5 class="author-name">Sophia Reynolds</h5>
+                            <span class="designation">College Student</span>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="carousel-item">
+                        <div class="testimonial-card">
+                            <i class="fas fa-quote-left quote-icon"></i>
+                            <img src="../static/./images/A2.png" class="user-img" alt="User  3">
+                            <p class="testimonial-text">"An excellent platform for students! The quizzes are not only fun but also educational. It’s a perfect blend of learning and entertainment!"</p>
+                            <h5 class="author-name">David Mitchell</h5>
+                            <span class="designation">High School Teacher</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+
+                <!-- Indicators -->
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+                    <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="2"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Newsletter -->
+<section class="container newsletter my-5">
+    <div class="newsletter-card gradient-bg text-white p-5 rounded-4">
+        <div class="row align-items-center">
+            <!-- Left Column - Illustration -->
+            <div class="col-md-6 mb-4 mb-md-0">
+                <img src="../static/./images/newsletter-animate.svg" alt="Newsletter Illustration" class="img-fluid news-img" style="max-height: 300px;">
+            </div>
+
+            <!-- Right Column - Content -->
+            <div class="col-md-6">
+                <div class="text-start">
+                    <h2 class="mb-4">📬 Stay Updated</h2>
+                    <p class="mb-4">Get daily quiz challenges and updates!</p>
+                    <div class="subscription-container">
+                        <div class="email-input">
+                            <input type="email" 
+                                   class="email-field" 
+                                   placeholder="Enter your email" 
+                                   required
+                                   style="border-color: var(--input-border, #ccc)">
+                            
+                            <button type="submit" class="subscribe-btn">
+                                Subscribe
+                                <svg class="share-icon" viewBox="0 0 24 24">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Set target time (24 hours from now)
+    const targetTime = new Date();
+    targetTime.setDate(targetTime.getDate() + 1);
+
+    function updateTimer() {
+        const currentTime = new Date();
+        const timeDifference = targetTime - currentTime;
+
+        if (timeDifference <= 0) {
+            document.getElementById('hours').textContent = '00';
+            document.getElementById('minutes').textContent = '00';
+            document.getElementById('seconds').textContent = '00';
+            return;
+        }
+
+        const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+        document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+        document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    // Initial update and set interval
+    updateTimer();
+    setInterval(updateTimer, 1000);
+</script>
+
+<style>
+    .svg-effect {
+        margin-left: -25%; /* Adjust this value to control how much of the SVG is outside */
+        width: 150%; /* Make the SVG larger to fill the space */
+    }
+</style>
+
+{% endblock %}

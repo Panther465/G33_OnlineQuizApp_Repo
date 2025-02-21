@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Website Landing Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+    <link href="../static/style.css" rel="stylesheet">
+    <style>
+        /* Only styles the start-text */
+        .start-text {
+            font-family: 'Rubik', sans-serif;
+            font-size: 20px;
+            font-weight: 300;
+            max-width: 300px; /* Ensure it wraps in two lines */
+            white-space: pre-line; /* Allows line breaks */
+            word-wrap: break-word;
+            text-align: center;
+            line-height: 1.3;
+            color: #343a3c;
+        }
+
+        .start-text h1 {
+            overflow: hidden;
+            border-right: 3px solid white;
+            display: inline-block;
+            animation: blink 0.6s infinite step-end;
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        .btn-success {
+            width: 200px;
+            height: 50px;
+            position: absolute;
+            margin-top: 53vh;
+            margin-left: 12vw;
+            border-radius: 40px;
+            background-color: #343a3c;
+            border: none;
+            color: #d5dce7;
+            font-family: "Rubik";
+            font-size: 20px;
+            cursor: pointer
+        }
+
+        /* Background shapes */
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.3;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        /* Shape sizes and positions */
+        .shape1 { top: 5%; left: 5%; width: 80px; height: 80px; animation-duration: 12s; }
+        .shape2 { top: 15%; right: 10%; width: 70px; height: 70px; animation-duration: 14s; }
+        .shape3 { bottom: 10%; left: 25%; width: 90px; height: 90px; animation-duration: 16s; }
+        .shape4 { bottom: 5%; right: 20%; width: 60px; height: 60px; animation-duration: 18s; }
+        .shape5 { top: 25%; left: 30%; width: 100px; height: 100px; animation-duration: 20s; }
+        .shape6 { top: 35%; right: 25%; width: 50px; height: 50px; animation-duration: 22s; }
+        .shape7 { bottom: 20%; left: 40%; width: 70px; height: 70px; animation-duration: 24s; }
+        .shape8 { bottom: 10%; right: 30%; width: 80px; height: 80px; animation-duration: 26s; }
+        .shape9 { top: 40%; left: 15%; width: 60px; height: 60px; animation-duration: 28s; }
+        .shape10 { top: 50%; right: 35%; width: 90px; height: 90px; animation-duration: 30s; }
+    </style>
+</head>
+<body>
+    <div class="container-md start-text">
+        <h1 id="typewriter"></h1>
+    </div>
+
+    <div class="background-container">
+        <img src="{{ url_for('static', filename='../static/./images/blob-scene-haikei.svg') }}" alt="Background SVG" class="background-svg">
+    </div>
+
+    <img src="{{ url_for('static', filename='../static/./images/kids-studying-from-home-animate(2).svg') }}" alt="Vector Art" class="vector-art">
+
+    <!-- Background shapes -->
+    <div class="background-shapes">
+        <!-- Math Shapes -->
+        <svg class="shape shape1" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-bas eline="middle" text-anchor="middle" font-size="50" fill="#343a3c">+</text>
+        </svg>
+        <svg class="shape shape2" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">-</text>
+        </svg>
+        <svg class="shape shape3" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">×</text>
+        </svg>
+        <svg class="shape shape4" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">÷</text>
+        </svg>
+        
+        <!-- Science Shapes -->
+        <svg class="shape shape5" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">⚗️</text>
+        </svg>
+        <svg class="shape shape6" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">🔬</text>
+        </svg>
+        
+        <!-- Geography Shapes -->
+        <svg class="shape shape7" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">🌍</text>
+        </svg>
+        <svg class="shape shape8" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">🗺️</text>
+        </svg>
+        
+        <!-- Additional Shapes -->
+        <svg class="shape shape9" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">🎨</text>
+        </svg>
+        <svg class="shape shape10" viewBox="0 0 100 100">
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="50" fill="#343a3c">📚</text>
+        </svg>
+    </div>
+
+
+    <script>
+    const texts = [
+        "Challenge Your Mind,\n Test Your Knowledge!",
+        "Think You’re Smart? \nProve It!",
+        "Play, Learn & Have \nFun with Quizzes!"
+    ];
+    let index = 0;
+    const typewriter = document.getElementById("typewriter");
+
+    function typeText(text, i = 0) {
+        if (i === 0) typewriter.innerHTML = ""; // Clear the text before starting a new one
+
+        if (i <= text.length) {
+            typewriter.innerHTML = text.slice(0, i).replace(/ /g, "&nbsp;"); // Keeps spaces
+            setTimeout(() => typeText(text, i + 1), 70); // Smooth typing speed
+        } else {
+            setTimeout(() => nextText(), 2000); // Pause before the next text starts
+        }
+    }
+
+    function nextText() {
+        index = (index + 1) % texts.length;
+        typeText(texts[index]);
+    }
+
+    typeText(texts[index]); // Start typing
+</script>
+<!-- Button linking to the home page -->
+<a href="{{ url_for('register') }}">
+    <button type="button" class="btn btn-success">Get Started &#10132;</button>
+</a>
+</body>
+</html>

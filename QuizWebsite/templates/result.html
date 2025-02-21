@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Results</title>
+    <style>
+        body {
+            background: white;
+            color:white;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quiz-container {
+            background-image:url("../static/./images/stacked-waves-haikei\(1\).svg");
+            background-size: cover;
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            width: 60%;
+            max-width: 800px;
+            text-align: center;
+            position: relative;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .result {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .answer {
+            background: #ff69b4;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        .correct {
+            background: #4CAF50;
+            border-radius: 20px;
+            
+        }
+
+        .incorrect {
+            background: #dc0f00f4;
+            border-radius: 20px;
+        }
+
+        .options {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .question-number {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .restart-btn {
+            background-color:#0056b3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+            border-radius: 30px;
+        }
+
+        .restart-btn:hover {
+            background-color: #ff69b4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quiz-container {
+                width: 90%;
+                padding: 15px;
+            }
+
+            .result {
+                font-size: 18px;
+            }
+
+            .answer {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-container {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .restart-btn {
+                width: 100%;
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h2>Your Results</h2>
+        
+        <div class="result">
+            <p>Your score: {{ score }} / {{ total }} ({{ 'Passed' if passed else 'Failed' }})</p>
+        </div>
+
+        <div class="options">
+            {% for question, answer in questions_with_answers %}
+                <div class="question-number">Question {{ loop.index }}:</div>
+                <div class="answer {% if answer == question['answer'] %}correct{% else %}incorrect{% endif %}">
+                    <strong>Selected Answer:</strong> {{ answer }} <br>
+                    <strong>Correct Answer:</strong> {{ question['answer'] }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <a href="{{ url_for('start_quiz', genre=genre) }}">
+            <button class="restart-btn">Restart Quiz</button>
+        </a>
+        <a href="{{ url_for('home') }}">
+            <button class="restart-btn">Return to Home</button>
+        </a>
+    </div>
+</body>
+</html>

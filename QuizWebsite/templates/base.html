@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <style>
+        .navbar {
+            border-radius: 30px; /* Rounded corners */
+            margin-top: 10px; /* Margin at the top */
+            margin-left: 5vw; /* Space on the left */
+            margin-right: 5vw; /* Space on the right */
+            padding-left:10px;
+            padding-right:2px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Floating effect */
+            width:90%;
+            top: 0;
+            transition: top 0.3s ease;
+        }
+        .navbar-container {
+            max-width: 1200px; /* Set a max width for the navbar */
+            margin: 0 auto; /* Center the navbar */
+            
+        }
+
+        .navbar.hide {
+            top: -100px; /* Adjust based on your navbar height */
+          }
+        .gradient-bg-nav{
+            background:#004f7c;
+        }
+
+        #profileModal .modal-content {
+            border-radius: 18px;
+            background:url(../static/images/stacked-waves-haikei\(1\).svg);  
+            background-size: cover;                              
+        }
+        
+        #profileModal .btn {
+            border-radius: 30px;
+        }
+
+        #profileModal .modal-body{
+            background:url(../static/stacked-waves-haikei\(1\).svg);
+            background-size:cover;
+        }
+
+        #profileModal h2 {
+            color: #f7f7f7;
+        }
+        
+        #profileModal p{
+            color: #f7f7f7;
+        }
+
+        .modal-title{
+            color: #f7f7f7;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Enhanced Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark gradient-bg-nav fixed-top">
+        <div class="container navbar-container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">
+                <i class="fas fa-trophy"></i> QuizMaster
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="{{ url_for('home') }}">Home</a></li>
+                    <li class="nav-item dropdown mega-menu">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            Categories
+                        </a>
+                        <div class="dropdown-menu p-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h6>Popular</h6>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-music me-2"></i>Music</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-puzzle-piece me-2"></i>Puzzle</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-image me-2"></i>Picture</a>
+                                </div>
+                                <!-- <div class="col-md-3">
+                                    <h6>Languages</h6>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-language me-2"></i>English</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-language me-2"></i>Hindi</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-language me-2"></i>Spanish</a>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6>Special</h6>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-science me-2"></i>Science</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>History</a>
+                                    <a class="dropdown-item" href="#"><i class="fas fa-film me-2"></i>Movies</a>
+                                </div> -->
+                            </div>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('create_quiz') }}"><i class="fas fa-plus-circle me-1"></i>Create</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="{{ url_for('blog') }}"></i>Blog</a></li> -->
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('leaderboard') }}"></i>Progress</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('contactus') }}"></i>Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('create_custom_quiz') }}"><i class="fas fa-plus-circle me-1"></i>Custom Quiz</a></li>
+
+                </ul>
+                <form class="d-flex">
+                    <div class="input-group">
+                        <input type="search" class="form-control search" placeholder="Search quizzes...">
+                        <button class="btn btn-outline-light search" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#profileModal">
+                        <img src="https://thumbs.dreamstime.com/b/boy-face-cartoon-cute-vector-illustration-graphic-design-145332120.jpg" 
+                        alt="Profile" class="rounded-circle" width="35" height="35">
+                    </a>
+                </li>
+            </div>
+        </div>
+        
+    </nav>
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel">User Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="https://thumbs.dreamstime.com/b/boy-face-cartoon-cute-vector-illustration-graphic-design-145332120.jpg" 
+                    alt="Profile Picture" class="rounded-circle" width="120" height="120">
+               
+                    <h2 class="mt-3">{{ current_user.name }}</h2>
+    
+                    <hr>
+                    <p><strong>Email:</strong> {{ current_user.email }}</p>
+                    <p><strong>Mobile:</strong> {{ current_user.mobile }}</p>
+    
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-primary btn-edit">Edit Profile</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger btn-edit">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+    {%block footer%}
+    <!-- Footer -->
+    <footer class="gradient-bg   footer1    text-white mt-5">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>QuizMaster Pro</h5>
+                    <p>Challenge your mind daily</p>
+                </div>
+                <div class="col-md-4">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">About Us</a></li>
+                        <li><a href="{{ url_for('contactus') }}" class="text-white">Contact</a></li>
+                        <li><a href="#" class="text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-end">
+                    <h6>Follow Us</h6>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <p class="fut"    >&copy; 2024 QuizMaster. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+  {%endblock%}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='style.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+<script>
+
+let lastScrollTop = 0;
+const navbar = document.querySelector('.navbar');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  
+  if (scrollTop > lastScrollTop) {
+    // Scrolling down - hide navbar
+    navbar.classList.add('hide');
+  } else {
+    // Scrolling up - show navbar
+    navbar.classList.remove('hide');
+  }
+  
+  lastScrollTop = scrollTop;
+});
+</script>
+
+</body>
+</html>

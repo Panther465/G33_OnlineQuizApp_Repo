@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+
+  .custom-swal-popup {
+    border-radius: 12px !important;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2) !important;
+    background-color: #d7f3ff;
+  }
+
+  .custom-swal-button {
+  background-color: #28a745 !important;
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  transition: background 0.3s ease !important;
+}
+
+.custom-swal-button:hover {
+  background-color: #218838 !important;
+}
+
+.custom-swal-button-error {
+  background-color: #dc3545 !important;
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  transition: background 0.3s ease !important;
+}
+
+.custom-swal-button-error:hover {
+  background-color: #c82333 !important;
+}
+</style>
+<div class="container create-quiz py-3">
+  <div class="card card-border shadow-lg">
+    <div class="card-body">
+      <div class="card-header bg-dark text-white text-center py-2">
+        <h1 style="margin-top:-15px; font-family:'Rubik'; color:#d7f3ff; font-size:30px;" class="mb-0 h4">Quiz Generator</h1>
+      </div>
+      <!-- Quiz Options Form -->
+      <div class="d-flex justify-content-center">
+        <form id="quizForm" class="mb-3 quiz-form-custom">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <label class="form-label quiz-label">Number of Questions</label>
+              <div class="input-group">
+                <span class="input-group-text quiz-input-group-text"><i class="bi bi-hash"></i></span>
+                <input 
+                type="number" 
+                id="amount" 
+                class="form-control quiz-input" 
+                style="font-size:1rem" 
+                min="1" 
+                max="50" 
+                value="5" 
+                required
+                >
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label quiz-label">Category</label>
+              <div class="input-group">
+                <span class="input-group-text quiz-input-group-text"><i class="bi bi-list-task"></i></span>
+                <select id="category" class="form-select quiz-input" style="font-size: 1rem;">
+                  <option value="">Any Category</option>
+                  <option>General Knowledge</option>
+                  <option>Science & Nature</option>
+                  <option>Computers</option>
+                  <option>Mathematics</option>
+                  <option>History</option>
+                  <option>Sports</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label quiz-label">Difficulty</label>
+              <div class="input-group">
+                <span class="input-group-text quiz-input-group-text"><i class="bi bi-bar-chart-line"></i></span>
+                <select id="difficulty" class="form-select quiz-input" style="font-size:1rem">
+                  <option value="">Any Difficulty</option>
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center mt-2">
+            <button class="btn btn-success btn-lg fw-bold" style="width:220px; margin-top:23px; border-radius:30px; font-size:1rem;">
+              <i class="bi bi-play-fill"></i> Generate Quiz
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="row align-items-center" id="quizInstructions">
+        <div class="col-12 col-md-6 order-md-1 vector-container">
+          <img src="../static/images/thinking-face-animate.svg" alt="Vector Art" class="img-fluid think">
+        </div>
+        <div class="col-12 col-md-6 order-md-2">
+          <div class="p-2 p-lg-3 quiz-instructions" style="color:#d7f3ff; font-family:'Dm Sans'">
+            <h4>1️⃣ Select Number of Questions</h4>
+            <p>Choose how many questions you want in your quiz. 📊</p>
+            <h4>2️⃣ Pick Your Category</h4>
+            <p>Select the subject or topic that interests you. 🎯</p>
+            <h4>3️⃣ Set the Difficulty Level</h4>
+            <p>Decide whether you're feeling a breeze or up for a challenge. 🔥</p>
+            <h4>4️⃣ Generate Your Quiz</h4>
+            <p>Click “Generate” and let the fun begin! 🚀</p>
+          </div>
+        </div>
+      </div>
+      <!-- Quiz Container (hidden initially) -->
+      <div id="questionContainer" class="d-none">
+        <div class="timer-container mb-4">
+          <svg class="timer-svg" viewBox="0 0 100 100">
+            <circle class="timer-base" cx="50" cy="50" r="45" />
+            <circle class="timer-progress" cx="50" cy="50" r="45" />
+            <foreignObject x="25" y="25" width="50" height="50">
+              <div class="timer-number">50</div>
+            </foreignObject>
+          </svg>
+        </div>
+        <h4 id="questionText" class="mb-3 questtext fw-bold"></h4>
+        <div id="answers" class="row row-cols-1 row-cols-md-2 g-3"></div>
+        <div class="mt-4 d-flex justify-content-between">
+          <button id="prevBtn" class="btn btn-secondary d-none">
+            <i class="bi bi-arrow-left-circle me-1"></i> Previous
+          </button>
+          <button id="nextBtn" class="btn btn-primary">
+            Next <i class="bi bi-arrow-right-circle ms-1"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Answers Container -->
+      <div id="answersContainer" class="d-none mt-4"></div>
+      <!-- Results Modal -->
+      <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content result-dialog">
+            <div class="modal-header">
+              <h5 class="modal-title" id="resultModalLabel">Quiz Results</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="resultBody"></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary popbtn" data-bs-dismiss="modal">Close</button>
+              <button type="button" id="saveQuizBtn" class="btn btn-success popbtn">Save Quiz</button>
+              <button type="button" id="viewAnswersBtn" class="btn btn-info popbtn d-none">View Answers</button>
+              <button type="button" id="retryBtn" class="btn popbtn btn-warning d-none">Retry</button>
+              <button type="button" id="restartBtn" class="btn popbtn btn-danger">Restart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  let questionsData = [];
+  let currentQuestionIndex = 0;
+  let userAnswers = [];
+  let questionExpired = [];
+  let timer;
+  let timeLeft = 50;
+  let finalScore = 0;
+  let quizGenre = "";
+
+  const currentUsername = "{{ current_user.name if current_user.is_authenticated else 'Guest' }}";
+
+  document.getElementById('quizForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const amount = document.getElementById('amount').value;
+    const category = document.getElementById('category').value;
+    const difficulty = document.getElementById('difficulty').value;
+    quizGenre = category || "General Knowledge";
+
+    let data;
+    try {
+      const response = await fetch('/get_questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, category, difficulty })
+      });
+      data = await response.json();
+    } catch (err) {
+      Swal.fire('Error', 'Error fetching questions: ' + err.message, 'error');
+      return;
+    }
+
+    if (!data || data.error || !Array.isArray(data)) {
+      Swal.fire('Error', data.error || 'Invalid question data format.', 'error');
+      return;
+    }
+
+    questionsData = data;
+    currentQuestionIndex = 0;
+    userAnswers = Array(questionsData.length).fill(null);
+    questionExpired = Array(questionsData.length).fill(false);
+
+    document.getElementById('quizInstructions').classList.add('d-none');
+    document.getElementById('quizForm').classList.add('d-none');
+    document.getElementById('questionContainer').classList.remove('d-none');
+    document.getElementById('answersContainer').classList.add('d-none');
+    document.getElementById('answersContainer').innerHTML = '';
+
+    showQuestion(currentQuestionIndex);
+  });
+
+  function showQuestion(index) {
+    if (index >= questionsData.length) {
+      calculateScore();
+      return;
+    }
+    resetTimer(index);
+    const q = questionsData[index];
+    const questionText = document.getElementById('questionText');
+    const answersDiv = document.getElementById('answers');
+    const allAnswers = [...q.incorrect_answers];
+    const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1));
+    allAnswers.splice(randomIndex, 0, q.correct_answer);
+    questionText.innerHTML = `Question ${index + 1}: ${q.question}`;
+    answersDiv.innerHTML = '';
+    allAnswers.forEach((answer) => {
+      const col = document.createElement('div');
+      col.classList.add('col');
+      const answerCard = document.createElement('div');
+      answerCard.classList.add('card', 'p-3', 'answer-card', 'text-dark', 'h-100', 'shadow-sm', 'hover-pointer');
+      answerCard.innerHTML = `<div class="fw-bold">${answer}</div>`;
+      if (userAnswers[index] === answer) {
+        answerCard.classList.add('bg-info', 'text-white');
+      }
+      answerCard.addEventListener('click', () => {
+        userAnswers[index] = answer;
+        document.querySelectorAll('#answers .answer-card').forEach(card => {
+          card.classList.remove('bg-info', 'text-white');
+        });
+        answerCard.classList.add('bg-info', 'text-white');
+      });
+      col.appendChild(answerCard);
+      answersDiv.appendChild(col);
+    });
+    const prevBtn = document.getElementById('prevBtn');
+    prevBtn.classList.toggle('d-none', index === 0);
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.innerHTML = index === questionsData.length - 1 ? 
+      `Submit <i class="bi bi-check-circle"></i>` : 
+      `Next <i class="bi bi-arrow-right-circle"></i>`;
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (currentQuestionIndex === questionsData.length - 1) {
+      calculateScore();
+    } else {
+      currentQuestionIndex++;
+      showQuestion(currentQuestionIndex);
+    }
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    const prevIndex = currentQuestionIndex - 1;
+    if (prevIndex >= 0 && !questionExpired[prevIndex]) {
+      currentQuestionIndex = prevIndex;
+      showQuestion(currentQuestionIndex);
+    }
+  });
+
+  const circumference = 2 * Math.PI * 45;
+  function resetTimer(qIndex) {
+    clearInterval(timer);
+    timeLeft = 50;
+    updateTimerDisplay(timeLeft);
+    timer = setInterval(() => {
+      timeLeft--;
+      updateTimerDisplay(timeLeft);
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        questionExpired[qIndex] = true;
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questionsData.length) {
+          showQuestion(currentQuestionIndex);
+        } else {
+          calculateScore();
+        }
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay(seconds) {
+    const timerNumber = document.querySelector('.timer-number');
+    const timerProgress = document.querySelector('.timer-progress');
+    const offset = circumference - (seconds / 50) * circumference;
+    timerNumber.textContent = seconds;
+    timerProgress.style.strokeDashoffset = offset;
+    if (seconds <= 10) {
+      timerProgress.classList.add('danger');
+      timerProgress.classList.remove('warning');
+    } else if (seconds <= 20) {
+      timerProgress.classList.add('warning');
+      timerProgress.classList.remove('danger');
+    } else {
+      timerProgress.classList.remove('warning', 'danger');
+    }
+  }
+
+  function calculateScore() {
+    clearInterval(timer);
+    let score = 0;
+    questionsData.forEach((q, idx) => {
+      if (userAnswers[idx] === q.correct_answer) {
+        score++;
+      }
+    });
+    finalScore = score;
+    const percentage = (score / questionsData.length) * 100;
+    let message = '';
+    const retryBtn = document.getElementById('retryBtn');
+    const viewAnswersBtn = document.getElementById('viewAnswersBtn');
+    if (percentage >= 70) {
+      message = 'Well done!';
+      retryBtn.classList.add('d-none');
+      viewAnswersBtn.classList.add('d-none');
+    } else {
+      message = 'Try again!';
+      retryBtn.classList.remove('d-none');
+      viewAnswersBtn.classList.remove('d-none');
+    }
+    const resultBody = document.getElementById('resultBody');
+    resultBody.innerHTML = 
+      `<p class="fs-5">Your score: ${score}/${questionsData.length}</p>
+      <p class="fs-4">${message}</p>`;
+    const resultModal = new bootstrap.Modal(document.getElementById('resultModal'));
+    resultModal.show();
+  }
+
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    const resultModal = bootstrap.Modal.getInstance(document.getElementById('resultModal'));
+    if (resultModal) resultModal.hide();
+    currentQuestionIndex = 0;
+    userAnswers = Array(questionsData.length).fill(null);
+    questionExpired = Array(questionsData.length).fill(false);
+    document.getElementById('answersContainer').classList.add('d-none');
+    document.getElementById('answersContainer').innerHTML = '';
+    showQuestion(currentQuestionIndex);
+  });
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    location.reload();
+  });
+
+  document.getElementById('viewAnswersBtn').addEventListener('click', () => {
+    const resultModal = bootstrap.Modal.getInstance(document.getElementById('resultModal'));
+    if (resultModal) resultModal.hide();
+    revealAnswers();
+  });
+
+  function revealAnswers() {
+    document.getElementById('questionContainer').classList.add('d-none');
+    const answersContainer = document.getElementById('answersContainer');
+    answersContainer.innerHTML = '';
+    questionsData.forEach((q, i) => {
+      const card = document.createElement('div');
+      card.classList.add('card', 'mb-3');
+      const cardBody = document.createElement('div');
+      cardBody.classList.add('card-body');
+      const questionTitle = document.createElement('h5');
+      questionTitle.classList.add('card-title');
+      questionTitle.innerHTML = `Question ${i + 1}: ${q.question}`;
+      cardBody.appendChild(questionTitle);
+      const allAnswers = [...q.incorrect_answers];
+      const randomIndex = Math.floor(Math.random() * (allAnswers.length + 1));
+      allAnswers.splice(randomIndex, 0, q.correct_answer);
+      allAnswers.forEach((answer) => {
+        const p = document.createElement('p');
+        p.classList.add('mb-1');
+        p.textContent = answer;
+        if (answer === q.correct_answer) {
+          p.classList.add('text-success', 'fw-bold');
+        }
+        cardBody.appendChild(p);
+      });
+      card.appendChild(cardBody);
+      answersContainer.appendChild(card);
+    });
+    answersContainer.classList.remove('d-none');
+  }
+
+  // Save Quiz automatically uses currentUsername
+  
+
+    document.getElementById('saveQuizBtn').addEventListener('click', async () => {
+        const payload = {
+            username: currentUsername,
+            genre: quizGenre,
+            score: finalScore,
+            total: questionsData.length
+        };
+        try {
+            const res = await fetch('/save_quiz', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            Swal.fire({
+                title: '🎉 Quiz Saved!',
+                html: `<p style="font-size: 18px; color: #333; font-weight: 500;">
+                          Your quiz score has been recorded successfully! 🚀
+                       </p>
+                       <p style="font-size: 16px; color: #666;">
+                          Score: <strong>${finalScore}</strong> / ${questionsData.length}
+                       </p>`,
+                icon: 'success',
+                confirmButtonText: '🏆 View Leaderboard',
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    confirmButton: 'custom-swal-button'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/leaderboard';
+                }
+            });
+        } catch (error) {
+            Swal.fire({
+                title: '❌ Error!',
+                text: "Error saving quiz: " + error.message,
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+                customClass: {
+                    popup: 'custom-swal-popup',
+                    confirmButton: 'custom-swal-button-error'
+                },
+                buttonsStyling: false
+            });
+        }
+    });
+    </script>
+    
+{% endblock %}

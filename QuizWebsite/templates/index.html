@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 500px;
+      display: flex;
+    }
+    .question-container {
+      flex: 1;
+      padding-right: 20px;
+    }
+    .answers-container {
+      flex: 1;
+    }
+    label {
+      display: block;
+      margin: 5px 0;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="question-container" id="question"></div>
+    <div class="answers-container" id="answers"></div>
+  </div>
+  <button id="next">Next Question</button>
+  <script>
+    let currentQuestionIndex = 0;
+    let questions = [];
+
+    async function fetchQuestions() {
+      const response = await fetch('/questions');
+      questions = await response.json();
+      displayQuestion();
+    }
+
+    function displayQuestion() {
+      const questionData = questions[currentQuestionIndex];
+      document.getElementById('question').innerText = questionData.question;
+      const answersContainer = document.getElementById('answers');
+      answersContainer.innerHTML = '';
+      for (const [key, value] of Object.entries(questionData.answers)) {
+        answersContainer.innerHTML += `
+          <label>
+            <input type="radio" name="question" value="${key}"> ${value}
+          </label>
+        `;
+      }
+    }
+
+    document.getElementById('next').addEventListener('click', () => {
+      const selectedAnswer = document.querySelector('input[name="question"]:checked');
+      if (!selectedAnswer) {
+        alert("Please select an answer!");
+        return;
+      }
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        displayQuestion();
+      } else {
+        alert("Quiz Completed!");
+        document.getElementById('next').style.display = 'none';
+      }
+    });
+
+    fetchQuestions();
+  </script>
+</body>
+</html>

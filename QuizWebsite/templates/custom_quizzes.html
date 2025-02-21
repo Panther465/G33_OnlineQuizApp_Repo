@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+        /* Ensure the navbar doesn't overlap content */
+        body {
+            padding-top: 120px; /* Adjust this value based on your navbar's height */
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Main content styling */
+        .main-content {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* Header styling */
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Card grid styling */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        /* Individual card styling */
+        .card {
+           background: url("../static/./images/stacked-waves-haikei\(1\).svg");
+            border-radius: 18px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #f8fc00;
+            font-family:"Dm Sans";
+        }
+
+        .card-subtitle {
+            font-size: 1em;
+            color: #f7f7f7;
+            margin-bottom: 15px;
+        }
+
+        .card-text {
+            font-size: 0.9em;
+            color: #fcf3f3;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .card-footer {
+            font-size: 0.8em;
+            color: #39bf34;
+            text-align: right;
+        }
+
+        .alert-info {
+            text-align: center;
+            color: #555;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .main-content h2{
+          margin-bottom: 48px;
+          font-family:"Rubik";
+        }
+
+        .cardfooter{
+          background:   rgba(59, 130, 246, 0.03);
+        }
+        .btn{
+          border-radius: 30px;
+          background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h2>Your Custom Quizzes</h2>
+        <div class="card-grid">
+            {% for quiz in quizzes %}
+            <div class="card">
+                <div class="card-body cardfooter">
+                    <h5 class="card-title">{{ quiz.title }}</h5>
+                    <h6 class="card-subtitle">{{ quiz.subject }}</h6>
+                    <p class="card-text">{{ quiz.questions|length }} Questions</p>
+                    <a href="{{ url_for('take_custom', quiz_id=quiz.id) }}" class="btn-primary btn">Take Quiz</a>
+                </div>
+                <div class="card-footer">
+                    <small>Created {{ quiz.created_at.strftime('%Y-%m-%d') }}</small>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert-info">No quizzes created yet!</div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+
+{% endblock %}
+{% block footer %}{% endblock %}
